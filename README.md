@@ -3,7 +3,7 @@
 ## Why use this container?
 **Simply put, this container has been written with simplicity and security in mind.**
 
-Surprisingly, _many_ community containers run unnecessarily with root privileges and don't provide help for dropping unneeded CAPabilities.  
+Surprisingly, _many_ community containers run unnecessarily with root privileges and don't provide help for dropping unneeded CAPabilities.
 Additionally, overly complex shell scripts and unofficial base images make it harder to verify the source.  
 
 To remedy the situation, these images have been written with security and simplicity in mind. See Design Goals further down.
@@ -18,7 +18,7 @@ If you need more customization, mount your own tinyproxy.conf to ```/etc/tinypro
 otherwise, the default tinyproxy config will be used and customized according to the environment variables.
 
 ### Considerations for the native configuration file
-**This section doesn't apply to the current version (but is relevant for the future release)!**
+**This section doesn't apply to the current version (but is relevant for the future release)!**  
 Note that you can't use /dev/stdout directly as the logfile: <https://github.com/tinyproxy/tinyproxy/issues/43>.  
 The proper way to get Tinyproxy to log to stdout is to disable LogFile and Syslog on the configuration
 so make sure that's how your file is set up.
