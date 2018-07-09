@@ -18,6 +18,7 @@ If you need more customization, mount your own tinyproxy.conf to ```/etc/tinypro
 otherwise, the default tinyproxy config will be used and customized according to the environment variables.
 
 ### Considerations for the native configuration file
+**This section doesn't apply to the current version (but is relevant for the future release)!**
 Note that you can't use /dev/stdout directly as the logfile: <https://github.com/tinyproxy/tinyproxy/issues/43>.  
 The proper way to get Tinyproxy to log to stdout is to disable LogFile and Syslog on the configuration
 so make sure that's how your file is set up.
