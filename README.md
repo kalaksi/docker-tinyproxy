@@ -6,18 +6,17 @@
 ### Why use this container?
 **Simply put, this container has been written with simplicity and security in mind.**
 
-Surprisingly, _many_ community containers run unnecessarily with root privileges and don't provide help for dropping unneeded CAPabilities.
+Surprisingly, _many_ community containers run unnecessarily with root privileges by default and don't provide help for dropping unneeded CAPabilities either.
 Additionally, overly complex shell scripts and unofficial base images make it harder to verify the source.  
 
-To remedy the situation, these images have been written with security and simplicity in mind. See Design Goals further down.
+To remedy the situation, these images have been written with security and simplicity in mind. See [Design Goals](#design-goals) further down.
 
 ### Running this container
 At the moment, I'm not providing full commands here.  
 I assume you're experienced enough to know how to run containers.  
 
 #### Supported tags
-See the ```Tags``` tab on Docker Hub for specifics.
-Basically you have:
+See the ```Tags``` tab on Docker Hub for specifics. Basically you have:
 - The default ```latest``` tag that always has the latest changes.
 - Minor versioned tags (follow Semantic Versioning), e.g. ```1.1``` which would follow branch ```1.1.x``` on GitHub.
 

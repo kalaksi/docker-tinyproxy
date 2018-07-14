@@ -38,8 +38,8 @@ ENTRYPOINT set -eu && \
                ([ -z "$ALLOWED_NETWORKS" ]   || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
                sed -i 's|^#LogFile .*|LogFile "/var/log/tinyproxy/tinyproxy.log"|' "$CONFIG"; \
            fi; \
-           # Unfortunately, we need to use this workaround for stdout until this feature is available: https://github.com/tinyproxy/tinyproxy/pull/122 \
-           # /dev/stdout directly won't work because of https://github.com/tinyproxy/tinyproxy/pull/95 \
+           # Unfortunately, we need to use this workaround for stdout until this feature is available: https://github.com/tinyproxy/tinyproxy/pull/122
+           # /dev/stdout directly won't work because of https://github.com/tinyproxy/tinyproxy/pull/95
            touch "/var/log/tinyproxy/tinyproxy.log"; \
            trap "/usr/bin/killall tinyproxy" INT TERM; \
            /usr/sbin/tinyproxy; \
