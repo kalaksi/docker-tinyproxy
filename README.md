@@ -34,6 +34,7 @@ so make sure that's how your file is set up.
 ### Development
 #### Design Goals
 - Never run as root unless necessary.
+- No static default passwords. That would make the container insecure by default.
 - Use only official base images.
 - Provide an example ```docker-compose.yml``` that also shows what CAPabilities can be dropped.
 - Offer versioned tags for stability.
