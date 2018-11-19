@@ -1,5 +1,5 @@
 FROM alpine:3.7
-MAINTAINER Kalaksi <kalaksi@users.noreply.github.com>
+LABEL maintainer="kalaksi@users.noreply.github.com"
 
 # See tinyproxy.conf for better explanation of these values.
 # Insert any value (preferably "yes") to disable the Via-header:
