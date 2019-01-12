@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tinyproxy
+  labels:
+    io.kompose.service: tinyproxy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        io.kompose.service: tinyproxy
+    spec:
+      containers:
+      - image: kalaksi/tinyproxy
+        name: tinyproxy
+        ports:
+          - containerPort: 8888
+        resources: {}
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+        env:
+          - { name: ALLOWED_NETWORKS, value: 10.0.0.0/8 }
+          - { name: DISABLE_VIA_HEADER, value: "yes" }
+          - { name: MAX_CLIENTS, value: "100" }
+          - { name: MAX_SPARE_SERVERS, value: "100" }
+          - { name: MIN_SPARE_SERVERS, value: "50" }
+          - { name: STAT_HOST, value: tinyproxy.stats }
