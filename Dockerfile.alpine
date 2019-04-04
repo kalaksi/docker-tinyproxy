@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3.9
 LABEL maintainer="kalaksi@users.noreply.github.com"
 
 # See tinyproxy.conf for better explanation of these values.
@@ -37,5 +37,6 @@ CMD set -eu; \
         ([ -z "$MIN_SPARE_SERVERS" ]  || sed -i "s|^StartServers .*|StartServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
         ([ -z "$MAX_SPARE_SERVERS" ]  || sed -i "s|^MaxSpareServers .*|MaxSpareServers $MAX_SPARE_SERVERS|" "$CONFIG"); \
         ([ -z "$ALLOWED_NETWORKS" ]   || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
+        sed -i 's|^LogFile |# LogFile |' "$CONFIG"; \
     fi; \
-    exec /usr/sbin/tinyproxy;
+    exec /usr/bin/tinyproxy -d;
