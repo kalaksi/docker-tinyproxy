@@ -27,21 +27,15 @@ EXPOSE 8888
 
 # Tinyproxy seems to be OK for getting privileges dropped beforehand
 USER ${TINYPROXY_UID}:${TINYPROXY_GID}
-ENTRYPOINT set -eu && \
-           CONFIG='/etc/tinyproxy/tinyproxy.conf'; \
-           if [ ! -f "$CONFIG"  ]; then \
-               cp /etc/tinyproxy/tinyproxy.default.conf "$CONFIG"; \
-               ([ -z "$DISABLE_VIA_HEADER" ] || sed -i "s|^#DisableViaHeader .*|DisableViaHeader Yes|" "$CONFIG"); \
-               ([ -z "$STAT_HOST" ]          || sed -i "s|^#StatHost .*|StatHost \"${STAT_HOST}\"|" "$CONFIG"); \
-               ([ -z "$MIN_SPARE_SERVERS" ]  || sed -i "s|^MinSpareServers .*|MinSpareServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
-               ([ -z "$MIN_SPARE_SERVERS" ]  || sed -i "s|^StartServers .*|StartServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
-               ([ -z "$MAX_SPARE_SERVERS" ]  || sed -i "s|^MaxSpareServers .*|MaxSpareServers $MAX_SPARE_SERVERS|" "$CONFIG"); \
-               ([ -z "$ALLOWED_NETWORKS" ]   || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
-               sed -i 's|^#LogFile .*|LogFile "/var/log/tinyproxy/tinyproxy.log"|' "$CONFIG"; \
-           fi; \
-           # Unfortunately, we need to use this workaround for stdout until this feature is available: https://github.com/tinyproxy/tinyproxy/pull/122
-           # /dev/stdout directly won't work because of https://github.com/tinyproxy/tinyproxy/pull/95
-           touch "/var/log/tinyproxy/tinyproxy.log"; \
-           trap "/usr/bin/killall tinyproxy" INT TERM; \
-           /usr/sbin/tinyproxy; \
-           tail -f /var/log/tinyproxy/tinyproxy.log & wait
+CMD set -eu; \
+    CONFIG='/etc/tinyproxy/tinyproxy.conf'; \
+    if [ ! -f "$CONFIG"  ]; then \
+        cp /etc/tinyproxy/tinyproxy.default.conf "$CONFIG"; \
+        ([ -z "$DISABLE_VIA_HEADER" ] || sed -i "s|^#DisableViaHeader .*|DisableViaHeader Yes|" "$CONFIG"); \
+        ([ -z "$STAT_HOST" ]          || sed -i "s|^#StatHost .*|StatHost \"${STAT_HOST}\"|" "$CONFIG"); \
+        ([ -z "$MIN_SPARE_SERVERS" ]  || sed -i "s|^MinSpareServers .*|MinSpareServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
+        ([ -z "$MIN_SPARE_SERVERS" ]  || sed -i "s|^StartServers .*|StartServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
+        ([ -z "$MAX_SPARE_SERVERS" ]  || sed -i "s|^MaxSpareServers .*|MaxSpareServers $MAX_SPARE_SERVERS|" "$CONFIG"); \
+        ([ -z "$ALLOWED_NETWORKS" ]   || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
+    fi; \
+    exec /usr/sbin/tinyproxy;
