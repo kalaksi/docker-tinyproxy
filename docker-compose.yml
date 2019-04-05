@@ -1,8 +1,8 @@
-version: 2
+version: '2'
 services:
   tinyproxy:
     image: kalaksi/tinyproxy
-    container_name: tinyproxy
+    restart: unless-stopped
     cap_drop:
       - ALL
     ports:
