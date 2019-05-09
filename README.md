@@ -16,7 +16,8 @@ To remedy the situation, these images have been written with security and simpli
 |Don't run as root        |✅    | Never run as root unless necessary.|
 |Official base image      |✅    | |
 |Drop extra CAPabilities  |✅    | See ```docker-compose.yml``` |
-|No default passwords     |✅    | No static default passwords. That would make the container insecure by default.|
+|No default passwords     |—      | (Not applicable) No static default passwords. That would make the container insecure by default. |
+|Support secrets-files    |—     | (Not applicable) Support providing e.g. passwords via files instead of environment variables. |
 |Handle signals properly  |✅    | |
 |Simple Dockerfile        |✅    | Keep everything in the Dockerfile if reasonable.|
 |Versioned tags           |✅    | Offer versioned tags for stability.|
