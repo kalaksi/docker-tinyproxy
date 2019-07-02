@@ -9,15 +9,15 @@
 Surprisingly, _many_ community containers run unnecessarily with root privileges by default and don't provide help for dropping unneeded CAPabilities either.
 On top of that, overly complex shell scripts, monolithic designs and unofficial base images make it harder to verify the source among other issues.  
 
-To remedy the situation, these images have been written with security and simplicity in mind.  
+To remedy the situation, these images have been written with security, simplicity and overall quality in mind.
 
 |Requirement              |Status|Details|
 |-------------------------|:----:|-------|
 |Don't run as root        |✅    | Never run as root unless necessary.|
 |Official base image      |✅    | |
 |Drop extra CAPabilities  |✅    | See ```docker-compose.yml``` |
-|No default passwords     |—      | (Not applicable) No static default passwords. That would make the container insecure by default. |
-|Support secrets-files    |—     | (Not applicable) Support providing e.g. passwords via files instead of environment variables. |
+|No default passwords     |✅    | No static default passwords. That would make the container insecure by default. |
+|Support secrets-files    |✅    | Support providing e.g. passwords via files instead of environment variables. |
 |Handle signals properly  |✅    | |
 |Simple Dockerfile        |✅    | Keep everything in the Dockerfile if reasonable.|
 |Versioned tags           |✅    | Offer versioned tags for stability.|
