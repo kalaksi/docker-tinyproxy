@@ -20,7 +20,9 @@ ENV TINYPROXY_GID 57981
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      tinyproxy
+      tinyproxy && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists
 
 RUN mv /etc/tinyproxy/tinyproxy.conf /etc/tinyproxy/tinyproxy.default.conf && \
     chown -R ${TINYPROXY_UID}:${TINYPROXY_GID} /etc/tinyproxy /var/run/tinyproxy /var/log/tinyproxy
