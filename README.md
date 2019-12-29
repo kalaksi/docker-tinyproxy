@@ -1,6 +1,6 @@
 
 ## Repositories
-- [Docker Hub repository](https://registry.hub.docker.com/u/kalaksi/tinyproxy/)
+- [Docker Hub repository](https://hub.docker.com/r/kalaksi/tinyproxy/)
 - [GitHub repository](https://github.com/kalaksi/docker-tinyproxy)
 
 ## Why use this container?
