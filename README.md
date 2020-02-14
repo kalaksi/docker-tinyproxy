@@ -45,7 +45,8 @@ See the repository on <https://github.com/kalaksi/docker-tinyproxy>.
 All kinds of contributions are welcome!
 
 ## License
-View [license information](https://github.com/kalaksi/docker-tinyproxy/blob/master/LICENSE) for the software contained in this image.  
-As with all Docker images, these likely also contain other software which may be under other licenses (such as Bash, etc from the base distribution, along with any direct or indirect dependencies of the primary software being contained).  
+Copyright (c) 2018 kalaksi@users.noreply.github.com. See [LICENSE](https://github.com/kalaksi/docker-tinyproxy/blob/master/LICENSE) for license information.  
+
+As with all Docker images, the built image likely also contains other software which may be under other licenses (such as software from the base distribution, along with any direct or indirect dependencies of the primary software being contained).  
   
 As for any pre-built image usage, it is the image user's responsibility to ensure that any use of this image complies with any relevant licenses for all software contained within.
