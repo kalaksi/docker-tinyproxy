@@ -11,18 +11,16 @@ variables:
   # Empty tag will become the tag "latest".
   IMAGE_TAG: ""
 
-workflow:
-  rules:
-    - if: $CI_COMMIT_REF_NAME != $CI_DEFAULT_BRANCH
-      variables:
-        IMAGE_TAG: ":$CI_COMMIT_REF_SLUG"
-    - when: always
-
 build:
   stage: build
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
+    # If not in master, use branch name with any ".x" suffixes removed.
+    - |
+      if [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
+        IMAGE_TAG=":$(echo "$CI_COMMIT_REF_NAME" | sed 's/\.x$//')"
+      fi
     - docker build --pull -t "${CI_REGISTRY_IMAGE}${IMAGE_TAG}" .
     - docker push "${CI_REGISTRY_IMAGE}${IMAGE_TAG}"
 
@@ -31,6 +29,10 @@ distribute:
   before_script:
     - docker login -u "$EXT_REGISTRY_USER" -p "$EXT_REGISTRY_PASSWORD" "$EXT_REGISTRY"
   script:
+    - |
+      if [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
+        IMAGE_TAG=":$(echo "$CI_COMMIT_REF_NAME" | sed 's/\.x$//')"
+      fi
     - docker pull "${CI_REGISTRY_IMAGE}${IMAGE_TAG}"
     - docker tag "${CI_REGISTRY_IMAGE}${IMAGE_TAG}" "${EXT_REGISTRY_IMAGE}${IMAGE_TAG}"
     - docker push "${EXT_REGISTRY_IMAGE}${IMAGE_TAG}"
