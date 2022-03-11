@@ -36,6 +36,7 @@ CMD set -eu; \
         cp /etc/tinyproxy/tinyproxy.default.conf "$CONFIG"; \
         ([ -z "$DISABLE_VIA_HEADER" ] || sed -i "s|^#DisableViaHeader .*|DisableViaHeader Yes|" "$CONFIG"); \
         ([ -z "$STAT_HOST" ]          || sed -i "s|^#StatHost .*|StatHost \"${STAT_HOST}\"|" "$CONFIG"); \
+        ([ -z "$MAX_CLIENTS" ]        || sed -i "s|^MaxClients .*|MaxClients $MAX_CLIENTS|" "$CONFIG"); \
         ([ -z "$MIN_SPARE_SERVERS" ]  || sed -i "s|^MinSpareServers .*|MinSpareServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
         ([ -z "$MIN_SPARE_SERVERS" ]  || sed -i "s|^StartServers .*|StartServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
         ([ -z "$MAX_SPARE_SERVERS" ]  || sed -i "s|^MaxSpareServers .*|MaxSpareServers $MAX_SPARE_SERVERS|" "$CONFIG"); \
