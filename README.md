@@ -34,10 +34,6 @@ See ```Dockerfile``` and ```docker-compose.yml``` (<https://github.com/kalaksi/d
 If you need more customization, mount your own tinyproxy.conf to ```/etc/tinyproxy/tinyproxy.conf```,
 otherwise, the default tinyproxy configuration file will be used and customized according to the environment variables.
   
-Note that you can't use /dev/stdout directly as the `LogFile` (<https://github.com/tinyproxy/tinyproxy/issues/43>).  
-The proper way to get Tinyproxy to log to stdout is to disable ```LogFile``` and ```Syslog``` on the configuration
-so make sure that's how your file is set up.
-
 ## Development
 
 ### Contributing

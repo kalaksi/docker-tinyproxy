@@ -13,6 +13,4 @@ services:
       DISABLE_VIA_HEADER: 'yes'
       STAT_HOST: tinyproxy.stats
       MAX_CLIENTS: 100
-      MIN_SPARE_SERVERS: 50
-      MAX_SPARE_SERVERS: 100
       ALLOWED_NETWORKS: 10.0.0.0/8
