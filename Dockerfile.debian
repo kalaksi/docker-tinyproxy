@@ -18,9 +18,10 @@ ENV ALLOWED_NETWORKS ""
 ENV TINYPROXY_UID 57981
 ENV TINYPROXY_GID 57981
 
+# Added curl for health checks eg `curl -I -H 'HOST: ${STAT_HOST}' http://127.0.0.1:8888 || exit 1`
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      tinyproxy && \
+      tinyproxy curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists
 

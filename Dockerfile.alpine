@@ -18,8 +18,9 @@ ENV ALLOWED_NETWORKS ""
 ENV TINYPROXY_UID 57981
 ENV TINYPROXY_GID 57981
 
+# Added curl for health checks eg `curl -I -H 'HOST: ${STAT_HOST}' http://127.0.0.1:8888 || exit 1`
 RUN apk add --no-cache \
-      tinyproxy
+      tinyproxy curl
 
 RUN mv /etc/tinyproxy/tinyproxy.conf /etc/tinyproxy/tinyproxy.default.conf && \
     chown -R ${TINYPROXY_UID}:${TINYPROXY_GID} /etc/tinyproxy /var/log/tinyproxy
@@ -35,6 +36,9 @@ CMD set -eu; \
         ([ -z "$DISABLE_VIA_HEADER" ] || sed -i "s|^#DisableViaHeader .*|DisableViaHeader Yes|" "$CONFIG"); \
         ([ -z "$STAT_HOST" ]          || sed -i "s|^#StatHost .*|StatHost \"${STAT_HOST}\"|" "$CONFIG"); \
         ([ -z "$MAX_CLIENTS" ]        || sed -i "s|^MaxClients .*|MaxClients $MAX_CLIENTS|" "$CONFIG"); \
+        ([ -z "$MIN_SPARE_SERVERS" ]  || sed -i "s|^MinSpareServers .*|MinSpareServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
+        ([ -z "$MIN_SPARE_SERVERS" ]  || sed -i "s|^StartServers .*|StartServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
+        ([ -z "$MAX_SPARE_SERVERS" ]  || sed -i "s|^MaxSpareServers .*|MaxSpareServers $MAX_SPARE_SERVERS|" "$CONFIG"); \
         ([ -z "$ALLOWED_NETWORKS" ]   || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
         sed -i 's|^LogFile |# LogFile |' "$CONFIG"; \
     fi; \
