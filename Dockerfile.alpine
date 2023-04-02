@@ -18,8 +18,9 @@ ENV ALLOWED_NETWORKS ""
 ENV TINYPROXY_UID 57981
 ENV TINYPROXY_GID 57981
 
+# Curl is for healthchecks.
 RUN apk add --no-cache \
-      tinyproxy
+      tinyproxy curl
 
 RUN mv /etc/tinyproxy/tinyproxy.conf /etc/tinyproxy/tinyproxy.default.conf && \
     chown -R ${TINYPROXY_UID}:${TINYPROXY_GID} /etc/tinyproxy /var/log/tinyproxy
