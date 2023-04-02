@@ -1,5 +1,4 @@
-# TODO: change back to Alpine when Alpine's domain resolving works with kubernetes
-FROM debian:stretch-slim
+FROM debian:bullseye-slim
 LABEL maintainer="kalaksi@users.noreply.github.com"
 
 # See tinyproxy.conf for better explanation of these values.
@@ -8,6 +7,7 @@ ENV DISABLE_VIA_HEADER ""
 # Set this to e.g. tinyproxy.stats to enable stats-page on that address:
 ENV STAT_HOST ""
 ENV MAX_CLIENTS ""
+# These will get deprecated in newer tinyproxy release.
 ENV MIN_SPARE_SERVERS ""
 ENV MAX_SPARE_SERVERS ""
 # A space separated list:
@@ -32,7 +32,6 @@ EXPOSE 8888
 # Tinyproxy seems to be OK for getting privileges dropped beforehand
 USER ${TINYPROXY_UID}:${TINYPROXY_GID}
 
-# Debian Stretch still has pretty old tinyproxy so we need this kludge
 ENTRYPOINT set -eu; \
            CONFIG='/etc/tinyproxy/tinyproxy.conf'; \
            if [ ! -f "$CONFIG"  ]; then \
@@ -46,9 +45,4 @@ ENTRYPOINT set -eu; \
                ([ -z "$ALLOWED_NETWORKS" ]   || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
                sed -i 's|^#LogFile .*|LogFile "/var/log/tinyproxy/tinyproxy.log"|' "$CONFIG"; \
            fi; \
-           # Unfortunately, we need to use this workaround for stdout until this feature is available: https://github.com/tinyproxy/tinyproxy/pull/122
-           # /dev/stdout directly won't work because of https://github.com/tinyproxy/tinyproxy/pull/95
-           touch "/var/log/tinyproxy/tinyproxy.log"; \
-           trap "/usr/bin/killall tinyproxy" INT TERM; \
-           /usr/sbin/tinyproxy; \
-           tail -f /var/log/tinyproxy/tinyproxy.log & wait
+	   exec /usr/bin/tinyproxy -d;
