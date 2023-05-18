@@ -13,7 +13,7 @@ ENV MAX_SPARE_SERVERS ""
 # A space separated list:
 ENV ALLOWED_NETWORKS ""
 # One of Critical, Error, Warning, Notice, Connect, Info
-ENV LOG_LEVEL "Warning"
+ENV LOG_LEVEL ""
 # Maximum number of seconds idle connections are allowed to remain open
 ENV TIMEOUT ""
 
