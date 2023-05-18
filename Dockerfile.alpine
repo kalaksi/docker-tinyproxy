@@ -42,7 +42,7 @@ CMD set -eu; \
         ([ -z "$MAX_CLIENTS" ]        || sed -i "s|^MaxClients .*|MaxClients $MAX_CLIENTS|" "$CONFIG"); \
         ([ -z "$ALLOWED_NETWORKS" ]   || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
         ([ -z "$LOG_LEVEL" ]          || sed -i "s|^LogLevel .*|LogLevel ${LOG_LEVEL}|" "$CONFIG"); \
-        #([ -z "$TIMEOUT" ]            || sed -i "s|^Timeout .*|Timeout ${TIMEOUT}|" "$CONFIG"); \
+        ([ -z "$TIMEOUT" ]            || sed -i "s|^Timeout .*|Timeout ${TIMEOUT}|" "$CONFIG"); \
         sed -i 's|^LogFile |# LogFile |' "$CONFIG"; \
     fi; \
     exec /usr/bin/tinyproxy -d;
