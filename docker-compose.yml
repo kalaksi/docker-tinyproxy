@@ -14,6 +14,8 @@ services:
       STAT_HOST: tinyproxy.stats
       MAX_CLIENTS: 100
       ALLOWED_NETWORKS: 127.0.0.1/8 10.0.0.0/8 
+      LOG_LEVEL: Notice
+      TIMEOUT: 900
     healthcheck:
       test: ["CMD", "curl", "-I", "-H", "Host: tinyproxy.stats", "http://localhost:8888"]
       interval: 5m

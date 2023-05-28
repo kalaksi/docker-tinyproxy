@@ -12,6 +12,10 @@ ENV MIN_SPARE_SERVERS ""
 ENV MAX_SPARE_SERVERS ""
 # A space separated list:
 ENV ALLOWED_NETWORKS ""
+# One of Critical, Error, Warning, Notice, Connect, Info
+ENV LOG_LEVEL ""
+# Maximum number of seconds idle connections are allowed to remain open
+ENV TIMEOUT ""
 
 # Use a custom UID/GID instead of the default system UID which has a greater possibility
 # for collisions with the host and other containers.
@@ -44,6 +48,8 @@ ENTRYPOINT set -eu; \
                ([ -z "$MIN_SPARE_SERVERS" ]  || sed -i "s|^StartServers .*|StartServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
                ([ -z "$MAX_SPARE_SERVERS" ]  || sed -i "s|^MaxSpareServers .*|MaxSpareServers $MAX_SPARE_SERVERS|" "$CONFIG"); \
                ([ -z "$ALLOWED_NETWORKS" ]   || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
+               ([ -z "$LOG_LEVEL" ]          || sed -i "s|^LogLevel .*|LogLevel ${LOG_LEVEL}|" "$CONFIG"); \
+               ([ -z "$TIMEOUT" ]            || sed -i "s|^Timeout .*|Timeout ${TIMEOUT}|" "$CONFIG"); \
                sed -i 's|^#LogFile .*|LogFile "/var/log/tinyproxy/tinyproxy.log"|' "$CONFIG"; \
            fi; \
 	   exec /usr/bin/tinyproxy -d;

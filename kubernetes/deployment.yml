@@ -28,3 +28,5 @@ spec:
           - { name: MAX_SPARE_SERVERS, value: "100" }
           - { name: MIN_SPARE_SERVERS, value: "50" }
           - { name: STAT_HOST, value: tinyproxy.stats }
+          - { name: LOG_LEVEL, value: Notice }
+          - { name: TIMEOUT, value: "900" }
