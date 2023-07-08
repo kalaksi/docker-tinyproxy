@@ -1,11 +1,11 @@
+stages:
+  - build
+  - distribute
+
 default:
   image: docker:20.10
   services:
     - docker:20.10-dind
-
-stages:
-  - build
-  - distribute
 
 variables:
   # Empty tag will become the tag "latest".
@@ -36,5 +36,3 @@ distribute:
     - docker pull "${CI_REGISTRY_IMAGE}${IMAGE_TAG}"
     - docker tag "${CI_REGISTRY_IMAGE}${IMAGE_TAG}" "${EXT_REGISTRY_IMAGE}${IMAGE_TAG}"
     - docker push "${EXT_REGISTRY_IMAGE}${IMAGE_TAG}"
-  rules:
-    - if: '$EXT_REGISTRY != null'
