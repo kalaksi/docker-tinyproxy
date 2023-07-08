@@ -30,3 +30,5 @@ spec:
           - { name: STAT_HOST, value: tinyproxy.stats }
           - { name: LOG_LEVEL, value: Notice }
           - { name: TIMEOUT, value: "900" }
+          - { name: AUTH_USER, value: "" }
+          - { name: AUTH_PASSWORD, value: "" }

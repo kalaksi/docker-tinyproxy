@@ -16,6 +16,10 @@ ENV ALLOWED_NETWORKS ""
 ENV LOG_LEVEL ""
 # Maximum number of seconds idle connections are allowed to remain open
 ENV TIMEOUT ""
+# Username for BasicAuth
+ENV AUTH_USER ""
+# Password for BasicAuth (letters and digits only)
+ENV AUTH_PASSWORD ""
 
 # Use a custom UID/GID instead of the default system UID which has a greater possibility
 # for collisions with the host and other containers.
@@ -37,12 +41,13 @@ CMD set -eu; \
     CONFIG='/etc/tinyproxy/tinyproxy.conf'; \
     if [ ! -f "$CONFIG"  ]; then \
         cp /etc/tinyproxy/tinyproxy.default.conf "$CONFIG"; \
-        ([ -z "$DISABLE_VIA_HEADER" ] || sed -i "s|^#DisableViaHeader .*|DisableViaHeader Yes|" "$CONFIG"); \
-        ([ -z "$STAT_HOST" ]          || sed -i "s|^#StatHost .*|StatHost \"${STAT_HOST}\"|" "$CONFIG"); \
-        ([ -z "$MAX_CLIENTS" ]        || sed -i "s|^MaxClients .*|MaxClients $MAX_CLIENTS|" "$CONFIG"); \
-        ([ -z "$ALLOWED_NETWORKS" ]   || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
-        ([ -z "$LOG_LEVEL" ]          || sed -i "s|^LogLevel .*|LogLevel ${LOG_LEVEL}|" "$CONFIG"); \
-        ([ -z "$TIMEOUT" ]            || sed -i "s|^Timeout .*|Timeout ${TIMEOUT}|" "$CONFIG"); \
+        ([ -z "$DISABLE_VIA_HEADER" ]                   || sed -i "s|^#DisableViaHeader .*|DisableViaHeader Yes|" "$CONFIG"); \
+        ([ -z "$STAT_HOST" ]                            || sed -i "s|^#StatHost .*|StatHost \"${STAT_HOST}\"|" "$CONFIG"); \
+        ([ -z "$MAX_CLIENTS" ]                          || sed -i "s|^MaxClients .*|MaxClients $MAX_CLIENTS|" "$CONFIG"); \
+        ([ -z "$ALLOWED_NETWORKS" ]                     || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
+        ([ -z "$LOG_LEVEL" ]                            || sed -i "s|^LogLevel .*|LogLevel ${LOG_LEVEL}|" "$CONFIG"); \
+        ([ -z "$TIMEOUT" ]                              || sed -i "s|^Timeout .*|Timeout ${TIMEOUT}|" "$CONFIG"); \
+        ([ -z "$AUTH_USER" ] || [ -z "$AUTH_PASSWORD" ] || sed -i "s|^#BasicAuth .*|BasicAuth ${AUTH_USER} ${AUTH_PASSWORD}|" "$CONFIG"); \
         sed -i 's|^LogFile |# LogFile |' "$CONFIG"; \
     fi; \
     exec /usr/bin/tinyproxy -d;
