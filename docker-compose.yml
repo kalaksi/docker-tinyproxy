@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.6'
 services:
   tinyproxy:
     image: docker.io/kalaksi/tinyproxy
@@ -16,10 +16,24 @@ services:
       ALLOWED_NETWORKS: 127.0.0.1/8 10.0.0.0/8 
       LOG_LEVEL: Notice
       TIMEOUT: 900
-      AUTH_USER: ''
-      AUTH_PASSWORD: ''
+      # AUTH_USER: ''
+      # Prefer secrets-mechanisms instead of environment variables.
+      # AUTH_PASSWORD: ''
+    # secrets:
+    #   - auth_password
+    # With Alpine base image, this is required, for some reason, or /run/secrets won't get mounted.
+    # tmpfs:
+    #   - /run
     healthcheck:
       test: ["CMD", "curl", "-I", "-H", "Host: tinyproxy.stats", "http://localhost:8888"]
       interval: 5m
       timeout: 10s
       retries: 1
+    # volumes:
+    #   # If not using docker-compose for secrets, you can still manually mount a file containing the password.
+    #   - ./secrets/auth_password:/run/secrets/auth_password:ro
+
+# Secret for AUTH_PASSWORD
+# secrets:
+#   auth_password:
+#     file: ./secrets/auth_password

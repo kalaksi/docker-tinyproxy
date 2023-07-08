@@ -1,3 +1,6 @@
+# Copyright (c) 2018 kalaksi@users.noreply.github.com.
+# This work is licensed under the terms of the MIT license. For a copy, see <https://opensource.org/licenses/MIT>.
+
 FROM debian:bookworm-slim
 LABEL maintainer="kalaksi@users.noreply.github.com"
 
@@ -7,7 +10,7 @@ ENV DISABLE_VIA_HEADER ""
 # Set this to e.g. tinyproxy.stats to enable stats-page on that address:
 ENV STAT_HOST ""
 ENV MAX_CLIENTS ""
-# These will get deprecated in newer tinyproxy release.
+# These 2 are deprecated.
 ENV MIN_SPARE_SERVERS ""
 ENV MAX_SPARE_SERVERS ""
 # A space separated list:
@@ -18,8 +21,12 @@ ENV LOG_LEVEL ""
 ENV TIMEOUT ""
 # Username for BasicAuth
 ENV AUTH_USER ""
-# Password for BasicAuth  (letters and digits only)
+# Password for BasicAuth (letters and digits only)
 ENV AUTH_PASSWORD ""
+# The preferred way for providing passwords. You can use e.g. docker-compose secrets for which this
+# variable has been configured for by default. Alternatively, you could bind-mount the
+# password-file manually and change this if necessary:
+ENV AUTH_PASSWORD_FILE "/run/secrets/auth_password"
 
 # Use a custom UID/GID instead of the default system UID which has a greater possibility
 # for collisions with the host and other containers.
@@ -40,21 +47,18 @@ EXPOSE 8888
 
 # Tinyproxy seems to be OK for getting privileges dropped beforehand
 USER ${TINYPROXY_UID}:${TINYPROXY_GID}
-
-ENTRYPOINT set -eu; \
-           CONFIG='/etc/tinyproxy/tinyproxy.conf'; \
-           if [ ! -f "$CONFIG"  ]; then \
-               cp /etc/tinyproxy/tinyproxy.default.conf "$CONFIG"; \
-               ([ -z "$DISABLE_VIA_HEADER" ]                    || sed -i "s|^#DisableViaHeader .*|DisableViaHeader Yes|" "$CONFIG"); \
-               ([ -z "$STAT_HOST" ]                             || sed -i "s|^#StatHost .*|StatHost \"${STAT_HOST}\"|" "$CONFIG"); \
-               ([ -z "$MAX_CLIENTS" ]                           || sed -i "s|^MaxClients .*|MaxClients $MAX_CLIENTS|" "$CONFIG"); \
-               ([ -z "$MIN_SPARE_SERVERS" ]                     || sed -i "s|^MinSpareServers .*|MinSpareServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
-               ([ -z "$MIN_SPARE_SERVERS" ]                     || sed -i "s|^StartServers .*|StartServers $MIN_SPARE_SERVERS|" "$CONFIG"); \
-               ([ -z "$MAX_SPARE_SERVERS" ]                     || sed -i "s|^MaxSpareServers .*|MaxSpareServers $MAX_SPARE_SERVERS|" "$CONFIG"); \
-               ([ -z "$ALLOWED_NETWORKS" ]                      || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done); \
-               ([ -z "$LOG_LEVEL" ]                             || sed -i "s|^LogLevel .*|LogLevel ${LOG_LEVEL}|" "$CONFIG"); \
-               ([ -z "$TIMEOUT" ]                               || sed -i "s|^Timeout .*|Timeout ${TIMEOUT}|" "$CONFIG"); \
-               ([ -z "$AUTH_USER" ] || [ -z "$AUTH_PASSWORD" ]  || sed -i "s|^#BasicAuth .*|BasicAuth ${AUTH_USER} ${AUTH_PASSWORD}|" "$CONFIG"); \
-               sed -i 's|^#LogFile .*|LogFile "/var/log/tinyproxy/tinyproxy.log"|' "$CONFIG"; \
-           fi; \
-	   exec /usr/bin/tinyproxy -d;
+CMD set -eu; \
+    CONFIG='/etc/tinyproxy/tinyproxy.conf'; \
+    if [ ! -f "$CONFIG"  ]; then \
+        cp /etc/tinyproxy/tinyproxy.default.conf "$CONFIG"; \
+        [ -z "$DISABLE_VIA_HEADER" ]                          || sed -i "s|^#DisableViaHeader .*|DisableViaHeader Yes|" "$CONFIG"; \
+        [ -z "$STAT_HOST" ]                                   || sed -i "s|^#StatHost .*|StatHost \"${STAT_HOST}\"|" "$CONFIG"; \
+        [ -z "$MAX_CLIENTS" ]                                 || sed -i "s|^MaxClients .*|MaxClients $MAX_CLIENTS|" "$CONFIG"; \
+        [ -z "$ALLOWED_NETWORKS" ]                            || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done; \
+        [ -z "$LOG_LEVEL" ]                                   || sed -i "s|^LogLevel .*|LogLevel ${LOG_LEVEL}|" "$CONFIG"; \
+        [ -z "$TIMEOUT" ]                                     || sed -i "s|^Timeout .*|Timeout ${TIMEOUT}|" "$CONFIG"; \
+        [ -z "$AUTH_USER" ] || [ -z "$AUTH_PASSWORD" ]        || sed -i "s|^#BasicAuth .*|BasicAuth ${AUTH_USER} ${AUTH_PASSWORD}|" "$CONFIG"; \
+        [ -z "$AUTH_USER" ] || [ ! -f "$AUTH_PASSWORD_FILE" ] || sed -Ei "s|^#?BasicAuth .*|BasicAuth ${AUTH_USER} $(cat "$AUTH_PASSWORD_FILE")|" "$CONFIG"; \
+        sed -i 's|^LogFile |# LogFile |' "$CONFIG"; \
+    fi; \
+    exec /usr/bin/tinyproxy -d;
