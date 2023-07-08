@@ -37,4 +37,4 @@ distribute:
     - docker tag "${CI_REGISTRY_IMAGE}${IMAGE_TAG}" "${EXT_REGISTRY_IMAGE}${IMAGE_TAG}"
     - docker push "${EXT_REGISTRY_IMAGE}${IMAGE_TAG}"
   rules:
-    - if: '$EXT_REGISTRY'
+    - if: $EXT_REGISTRY != null
