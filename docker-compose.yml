@@ -21,7 +21,7 @@ services:
       # AUTH_PASSWORD: ''
     # secrets:
     #   - auth_password
-    # With Alpine base image, this is required, for some reason, or /run/secrets won't get mounted.
+    # # With Alpine base image, this is required, for some reason, or /run/secrets won't get mounted.
     # tmpfs:
     #   - /run
     healthcheck:
