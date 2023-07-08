@@ -27,6 +27,7 @@ build:
 distribute:
   stage: distribute
   before_script:
+    - echo "Registry: $EXT_REGISTRY"
     - docker login -u "$EXT_REGISTRY_USER" -p "$EXT_REGISTRY_PASSWORD" "$EXT_REGISTRY"
   script:
     - |
