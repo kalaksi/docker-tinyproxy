@@ -19,6 +19,7 @@ services:
       # AUTH_USER: ''
       # Prefer secrets-mechanisms instead of environment variables.
       # AUTH_PASSWORD: ''
+      # Password for BasicAuth (letters and digits only)
     # secrets:
     #   - auth_password
     # # With Alpine base image, this is required, for some reason, or /run/secrets won't get mounted.
