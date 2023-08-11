@@ -5,12 +5,13 @@ FROM alpine:3.18.2
 LABEL maintainer="kalaksi@users.noreply.github.com"
 
 # See tinyproxy.conf for better explanation of these values.
-# Insert any value (preferably "yes") to disable the Via-header:
+
+# Insert "yes" to disable the Via-header
 ENV DISABLE_VIA_HEADER ""
-# Set this to e.g. tinyproxy.stats to enable stats-page on that address:
+# Set this to e.g. tinyproxy.stats to enable stats-page on that address
 ENV STAT_HOST ""
 ENV MAX_CLIENTS ""
-# A space separated list:
+# A space separated list
 ENV ALLOWED_NETWORKS ""
 # One of Critical, Error, Warning, Notice, Connect, Info
 ENV LOG_LEVEL ""
@@ -22,7 +23,7 @@ ENV AUTH_USER ""
 ENV AUTH_PASSWORD ""
 # The preferred way for providing passwords. You can use e.g. docker-compose secrets for which this
 # variable has been configured for by default. Alternatively, you could bind-mount the
-# password-file manually and change this if necessary:
+# password-file manually and change this if necessary
 ENV AUTH_PASSWORD_FILE "/run/secrets/auth_password"
 
 # Use a custom UID/GID instead of the default system UID which has a greater possibility

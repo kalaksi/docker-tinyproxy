@@ -9,14 +9,22 @@ services:
       - ALL
     ports:
       - 8888:8888
+    # See tinyproxy.conf for better explanation of these values.
     environment:
+      # Set to "yes" to disable the Via-header, set to empty to leave it enabled.
       DISABLE_VIA_HEADER: 'yes'
+      # Set this to e.g. tinyproxy.stats to enable stats-page on that address
       STAT_HOST: tinyproxy.stats
       MAX_CLIENTS: 100
+      # A space separated list:
       ALLOWED_NETWORKS: 127.0.0.1/8 10.0.0.0/8 
+      # One of Critical, Error, Warning, Notice, Connect, Info
       LOG_LEVEL: Notice
+      # Maximum number of seconds idle connections are allowed to remain open
       TIMEOUT: 900
+      # Username for BasicAuth
       # AUTH_USER: ''
+      # Password for BasicAuth (letters and digits only)
       # Prefer secrets-mechanisms instead of environment variables.
       # AUTH_PASSWORD: ''
     # secrets:
