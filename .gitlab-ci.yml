@@ -34,9 +34,7 @@ distribute:
       if [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
         IMAGE_TAG=":$(echo "$CI_COMMIT_REF_NAME" | sed 's/\.x$//')"
       fi
-    - docker pull "${CI_REGISTRY_IMAGE}${IMAGE_TAG}"
-    - docker tag "${CI_REGISTRY_IMAGE}${IMAGE_TAG}" "${EXT_REGISTRY_IMAGE}${IMAGE_TAG}"
-    - docker push "${EXT_REGISTRY_IMAGE}${IMAGE_TAG}"
+    - docker buildx imagetools create -t "${EXT_REGISTRY_IMAGE}${IMAGE_TAG}" "${CI_REGISTRY_IMAGE}${IMAGE_TAG}"
   only:
     variables:
       - $EXT_REGISTRY
