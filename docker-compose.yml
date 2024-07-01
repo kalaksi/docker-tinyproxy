@@ -16,7 +16,7 @@ services:
       # Set this to e.g. tinyproxy.stats to enable stats-page on that address
       STAT_HOST: tinyproxy.stats
       MAX_CLIENTS: 100
-      # A space separated list:
+      # A space separated list. If not set or is empty, all networks are allowed.
       ALLOWED_NETWORKS: 127.0.0.1/8 10.0.0.0/8 
       # One of Critical, Error, Warning, Notice, Connect, Info
       LOG_LEVEL: Notice
