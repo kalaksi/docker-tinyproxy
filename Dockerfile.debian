@@ -13,7 +13,7 @@ ENV MAX_CLIENTS=""
 # These 2 are deprecated.
 ENV MIN_SPARE_SERVERS=""
 ENV MAX_SPARE_SERVERS=""
-# A space separated list:
+# A space separated list. If not set or is empty, all networks are allowed.
 ENV ALLOWED_NETWORKS=""
 # One of Critical, Error, Warning, Notice, Connect, Info
 ENV LOG_LEVEL=""
@@ -25,7 +25,7 @@ ENV AUTH_USER=""
 ENV AUTH_PASSWORD=""
 # The preferred way for providing passwords. You can use e.g. docker-compose secrets for which this
 # variable has been configured for by default. Alternatively, you could bind-mount the
-# password-file manually and change this if necessary:
+# password-file manually and change this if necessary
 ENV AUTH_PASSWORD_FILE="/run/secrets/auth_password"
 
 # Use a custom UID/GID instead of the default system UID which has a greater possibility
@@ -51,11 +51,11 @@ CMD set -eu; \
     CONFIG='/etc/tinyproxy/tinyproxy.conf'; \
     if [ ! -f "$CONFIG"  ]; then \
         cp /etc/tinyproxy/tinyproxy.default.conf "$CONFIG"; \
+        sed -i "s|^Allow |#Allow |" "$CONFIG"; \
         [ -z "$DISABLE_VIA_HEADER" ]                          || sed -i "s|^#DisableViaHeader .*|DisableViaHeader Yes|" "$CONFIG"; \
         [ -z "$STAT_HOST" ]                                   || sed -i "s|^#StatHost .*|StatHost \"${STAT_HOST}\"|" "$CONFIG"; \
         [ -z "$MAX_CLIENTS" ]                                 || sed -i "s|^MaxClients .*|MaxClients $MAX_CLIENTS|" "$CONFIG"; \
         [ -z "$ALLOWED_NETWORKS" ]                            || for network in $ALLOWED_NETWORKS; do echo "Allow $network" >> "$CONFIG"; done; \
-        [ -z "$ALLOWED_NETWORKS" ]                            && sed -i "s|^Allow |#Allow |" "$CONFIG"; \
         [ -z "$LOG_LEVEL" ]                                   || sed -i "s|^LogLevel .*|LogLevel ${LOG_LEVEL}|" "$CONFIG"; \
         [ -z "$TIMEOUT" ]                                     || sed -i "s|^Timeout .*|Timeout ${TIMEOUT}|" "$CONFIG"; \
         [ -z "$AUTH_USER" ] || [ -z "$AUTH_PASSWORD" ]        || sed -i "s|^#BasicAuth .*|BasicAuth ${AUTH_USER} ${AUTH_PASSWORD}|" "$CONFIG"; \
