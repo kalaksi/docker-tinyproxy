@@ -6,7 +6,9 @@ LABEL maintainer="kalaksi@users.noreply.github.com"
 
 # See tinyproxy.conf for better explanation of these values.
 
-# Insert "yes" to disable the Via-header
+# The port which the Tinyproxy service will listen on.
+ENV PORT="8888"
+# Insert any value (preferably "yes") to disable the Via-header:
 ENV DISABLE_VIA_HEADER=""
 # Set this to e.g. tinyproxy.stats to enable stats-page on that address
 ENV STAT_HOST=""
@@ -46,6 +48,7 @@ CMD set -eu; \
     if [ ! -f "$CONFIG"  ]; then \
         cp /etc/tinyproxy/tinyproxy.default.conf "$CONFIG"; \
         sed -i "s|^Allow |#Allow |" "$CONFIG"; \
+        [    "$PORT" != "8888" ]                              && sed -i "s|^Port 8888|Port $PORT|" "$CONFIG"; \
         [ -z "$DISABLE_VIA_HEADER" ]                          || sed -i "s|^#DisableViaHeader .*|DisableViaHeader Yes|" "$CONFIG"; \
         [ -z "$STAT_HOST" ]                                   || sed -i "s|^#StatHost .*|StatHost \"${STAT_HOST}\"|" "$CONFIG"; \
         [ -z "$MAX_CLIENTS" ]                                 || sed -i "s|^MaxClients .*|MaxClients $MAX_CLIENTS|" "$CONFIG"; \
