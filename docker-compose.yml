@@ -11,6 +11,8 @@ services:
       - 8888:8888
     # See tinyproxy.conf for better explanation of these values.
     environment:
+      # Optionally override port tinyproxy is listening on.
+      # PORT: 8080
       # Set to "yes" to disable the Via-header, set to empty to leave it enabled.
       DISABLE_VIA_HEADER: 'yes'
       # Set this to e.g. tinyproxy.stats to enable stats-page on that address
