@@ -36,6 +36,8 @@ services:
     #   - /run
     healthcheck:
       test: ["CMD", "curl", "-I", "-H", "Host: tinyproxy.stats", "http://localhost:8888"]
+      # Change to test: ["CMD", "curl", "-u", "<username>:<password>", "-I", "-H", "Host: tinyproxy.stats", "http://localhost:8888"] if you
+      # use BasicAuth.
       interval: 5m
       timeout: 10s
       retries: 1
