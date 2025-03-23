@@ -35,9 +35,10 @@ services:
     # tmpfs:
     #   - /run
     healthcheck:
+      # Healthcheck command for curl. Change port if you changed PORT environment variable above.
       test: ["CMD", "curl", "-I", "-H", "Host: tinyproxy.stats", "http://localhost:8888"]
-      # Change to test: ["CMD", "curl", "-u", "<username>:<password>", "-I", "-H", "Host: tinyproxy.stats", "http://localhost:8888"] if you
-      # use BasicAuth.
+      # If you use use BasicAuth use this line instead, and replace <username>:<password> with your credentials and comment out the line above.
+      # test: ["CMD", "curl", "-u", "<username>:<password>", "-I", "-H", "Host: tinyproxy.stats", "http://localhost:8888"] 
       interval: 5m
       timeout: 10s
       retries: 1
