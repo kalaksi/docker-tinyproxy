@@ -1,4 +1,3 @@
-version: '3.6'
 services:
   tinyproxy:
     image: docker.io/kalaksi/tinyproxy
