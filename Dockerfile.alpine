@@ -1,7 +1,7 @@
 # Copyright (c) 2018 kalaksi@users.noreply.github.com.
 # This work is licensed under the terms of the MIT license. For a copy, see <https://opensource.org/licenses/MIT>.
 
-FROM alpine:3.22.1
+FROM debian:bookworm-slim
 LABEL maintainer="kalaksi@users.noreply.github.com"
 
 # See tinyproxy.conf for better explanation of these values.
@@ -13,6 +13,9 @@ ENV DISABLE_VIA_HEADER=""
 # Set this to e.g. tinyproxy.stats to enable stats-page on that address
 ENV STAT_HOST=""
 ENV MAX_CLIENTS=""
+# These 2 are deprecated.
+ENV MIN_SPARE_SERVERS=""
+ENV MAX_SPARE_SERVERS=""
 # A space separated list. If not set or is empty, all networks are allowed.
 ENV ALLOWED_NETWORKS=""
 # One of Critical, Error, Warning, Notice, Connect, Info
@@ -27,6 +30,13 @@ ENV AUTH_PASSWORD=""
 # variable has been configured for by default. Alternatively, you could bind-mount the
 # password-file manually and change this if necessary
 ENV AUTH_PASSWORD_FILE="/run/secrets/auth_password"
+# Upstream proxy server for forward proxy support
+# Format: type://[user:pass@]host:port (auth credentials not supported in upstream config)
+# Supported types: http, socks4, socks5
+ENV UPSTREAM_PROXY=""
+# Domain filter for upstream proxy (optional)
+# If set, only requests to this domain/network will use the upstream proxy
+ENV UPSTREAM_DOMAIN=""
 
 # Use a custom UID/GID instead of the default system UID which has a greater possibility
 # for collisions with the host and other containers.
@@ -34,10 +44,14 @@ ENV TINYPROXY_UID="57981"
 ENV TINYPROXY_GID="57981"
 
 # Curl is for healthchecks.
-RUN apk add --no-cache tinyproxy curl
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      tinyproxy curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists
 
 RUN mv /etc/tinyproxy/tinyproxy.conf /etc/tinyproxy/tinyproxy.default.conf && \
-    chown -R ${TINYPROXY_UID}:${TINYPROXY_GID} /etc/tinyproxy /var/log/tinyproxy
+    chown -R ${TINYPROXY_UID}:${TINYPROXY_GID} /etc/tinyproxy /var/run/tinyproxy /var/log/tinyproxy
 
 EXPOSE 8888
 
@@ -57,6 +71,16 @@ CMD set -eu; \
         [ -z "$TIMEOUT" ]                                     || sed -i "s|^Timeout .*|Timeout ${TIMEOUT}|" "$CONFIG"; \
         [ -z "$AUTH_USER" ] || [ -z "$AUTH_PASSWORD" ]        || sed -i "s|^#BasicAuth .*|BasicAuth ${AUTH_USER} ${AUTH_PASSWORD}|" "$CONFIG"; \
         [ -z "$AUTH_USER" ] || [ ! -f "$AUTH_PASSWORD_FILE" ] || sed -Ei "s|^#?BasicAuth .*|BasicAuth ${AUTH_USER} $(cat "$AUTH_PASSWORD_FILE")|" "$CONFIG"; \
+        [ -z "$UPSTREAM_PROXY" ] || { \
+            proxy_type=$(echo "$UPSTREAM_PROXY" | sed 's|://.*||'); \
+            proxy_url=$(echo "$UPSTREAM_PROXY" | sed 's|.*://||'); \
+            proxy_host_port=$(echo "$proxy_url" | sed 's|.*@||'); \
+            if [ -n "$UPSTREAM_DOMAIN" ]; then \
+                echo "Upstream $proxy_type $proxy_host_port \"$UPSTREAM_DOMAIN\"" >> "$CONFIG"; \
+            else \
+                echo "Upstream $proxy_type $proxy_host_port" >> "$CONFIG"; \
+            fi; \
+        }; \
         sed -i 's|^LogFile |# LogFile |' "$CONFIG"; \
     fi; \
     exec /usr/bin/tinyproxy -d;
