@@ -1,0 +1,84 @@
+name: Simple CI Tests
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test Build and Proxy Listening
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Install Docker Compose
+      run: |
+        sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        docker-compose --version
+      
+    - name: Build Docker image
+      run: docker build -t test-tinyproxy .
+      
+    - name: Test proxy is listening
+      run: |
+        # Start container
+        docker run -d --name test-proxy -p 8888:8888 test-tinyproxy
+        
+        # Wait for service to start
+        sleep 5
+        
+        # Test that tinyproxy process is running
+        if docker exec test-proxy pidof tinyproxy > /dev/null; then
+          echo "✅ Tinyproxy process is running"
+        else
+          echo "❌ Tinyproxy process is not running"
+          docker logs test-proxy
+          exit 1
+        fi
+        
+        # Test that the proxy port is listening by trying to connect
+        if docker exec test-proxy curl -x localhost:8888 --connect-timeout 3 http://example.com 2>&1 | grep -q "tinyproxy"; then
+          echo "✅ Proxy is responding on port 8888"
+        else
+          echo "❌ Proxy is not responding on port 8888"
+          docker logs test-proxy
+          exit 1
+        fi
+        
+        # Test upstream proxy configuration
+        docker stop test-proxy || { echo "❌ Failed to stop test-proxy container"; docker logs test-proxy; exit 1; }
+        docker rm test-proxy || { echo "❌ Failed to remove test-proxy container"; docker ps -a; exit 1; }
+        
+        # Test with upstream proxy
+        docker run -d --name test-upstream-proxy \
+          -e UPSTREAM_PROXY="http://proxy.example.com:8080" \
+          test-tinyproxy
+        
+        sleep 3
+        
+        # Verify upstream config was applied
+        if docker exec test-upstream-proxy grep "Upstream http proxy.example.com:8080" /etc/tinyproxy/tinyproxy.conf; then
+          echo "✅ Upstream proxy configuration works"
+        else
+          echo "❌ Upstream proxy configuration failed"
+          docker logs test-upstream-proxy
+          exit 1
+        fi
+        
+        # Cleanup
+        docker stop test-upstream-proxy
+        docker rm test-upstream-proxy
+        
+    - name: Test Docker Compose configuration
+      run: |
+        # Validate docker-compose.yml syntax
+        docker-compose config > /dev/null
+        echo "✅ Docker Compose configuration is valid"
